@@ -3,7 +3,41 @@
 
 A wrapper around matplotlib with themes.
 
-TODO: write this readme
+## Usage:
+Instead of doing the typical
+
+```python
+    from matplotlib import pyplot as plt
+```
+
+you instead import the theme you want
+
+
+```python
+    from pyplotthemes import classic as plt
+```
+
+Every method/attribute in pyplot is available in the themes so this can be
+a one line replacement to get away from the default settings.
+
+## Why another theme package?
+There are several packages available that try to change the way your plots look.
+Most change the matplotlib *rcParams*, but go no further. In addition, they
+assume
+you have not messed up your *rcParams* file, and it's not trivial to use many
+different
+themes in the same program.
+
+This package tries to achieve the following:
+
+* Every plotting call assumes nothing about styles, and will reset the
+*rcParams* before every call. This makes it possible to use several themes in
+one program and ensures consistency even if you've screwed up your *rcParams*
+file.
+* Tweak things that can't be tweaked with *rcParams*, like axes positioning,
+legend alpha, etc.
+* Allow everything to be customized. You can override all *rcParam* values in
+the theme constructor.
 
 # Examples
 
