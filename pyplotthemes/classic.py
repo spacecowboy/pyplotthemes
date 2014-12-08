@@ -5,31 +5,28 @@ from matplotlib import pyplot as plt
 from functools import wraps
 
 
-_almost_black = '#262626'
-_light_grey = '#fafafa'
 
-
-class PrettyTheme(BaseTheme):
+class ClassicTheme(BaseTheme):
     '''
-    A minimalist theme with ticks and axes only where
-    required. More suitable for web publication than print.
+    A classically looking theme with enclosing boxes and a no-frills
+    approach. Suitable for publications.
     '''
     def __init__(self, **kwargs):
         # Colors
-        cadd(kwargs, 'axes.color_cycle', ['#E41A1C', '#377EB8', '#4DAF4A',
-                                          '#984EA3', '#FF7F00',  '#A65628',
-                                          '#F781BF', '#999999'])
+        # Colorbrewer 9-class Set1 (minus yellow), print-friendly
+        cadd(kwargs, 'axes.color_cycle',
+             "#e41a1c #377eb8 #4daf4a #984ea3 #ff7f00 #a65628 #f781bf #999999".split(" "))
         # Axes
         cadd(kwargs, 'axes.linewidth', 0.5)
         cadd(kwargs, 'axes.labelsize', 'large')
-        cadd(kwargs, 'axes.labelcolor', _almost_black)
+        cadd(kwargs, 'axes.labelcolor', "black")
         cadd(kwargs, 'axes.facecolor', 'white')
         cadd(kwargs, 'axes.edgecolor', 'white')
         # Ticks
-        cadd(kwargs, 'xtick.direction', 'out')
-        cadd(kwargs, 'ytick.direction', 'out')
-        cadd(kwargs, 'xtick.color', _almost_black)
-        cadd(kwargs, 'ytick.color', _almost_black)
+        cadd(kwargs, 'xtick.direction', 'in')
+        cadd(kwargs, 'ytick.direction', 'in')
+        cadd(kwargs, 'xtick.color', "black")
+        cadd(kwargs, 'ytick.color', "black")
         # Grid
         cadd(kwargs, 'grid.color', 'white')
         cadd(kwargs, 'grid.linestyle', '-')
@@ -37,7 +34,7 @@ class PrettyTheme(BaseTheme):
         cadd(kwargs, 'axes.grid', False)
         # Legend
         cadd(kwargs, 'legend.numpoints', 1)
-        cadd(kwargs, 'legend.fancybox', True)
+        cadd(kwargs, 'legend.fancybox', False)
         # Figure
         cadd(kwargs, 'figure.figsize', (5, 4))
         cadd(kwargs, 'figure.facecolor', 'white')
@@ -57,18 +54,17 @@ class PrettyTheme(BaseTheme):
         cadd(kwargs, 'framealpha', 0.5)
         
         lg = plt.legend(*args, **kwargs)
-        # Remove border of box
-        lg.get_frame().set_linewidth(0.0)
+        # Set black border
+        lg.get_frame().set_edgecolor('black')
         return lg
+
 
     @wraps(plt.plot)
     def plot(self, *args, **kwargs):
         self.setstyle()
         ax = get_ax(kwargs)
 
-        remove_ticks(ax)
-        remove_spines(ax)
-        set_spines(ax, _almost_black)
+        set_spines(ax, "black")
         
         return plt.plot(*args, **kwargs)
         
@@ -76,12 +72,8 @@ class PrettyTheme(BaseTheme):
     def semilogx(self, *args, **kwargs):
         self.setstyle()
         ax = get_ax(kwargs)
-
-        set_ticks_position(ax, 'bottom', 'left')
-        remove_ticks(ax, ['y'])
-        remove_spines(ax)
-        set_spines(ax, _almost_black)
-        move_spines(ax, ['left'], [-0.02])
+        
+        set_spines(ax, "black")
         
         return plt.semilogx(*args, **kwargs)
         
@@ -90,11 +82,7 @@ class PrettyTheme(BaseTheme):
         self.setstyle()
         ax = get_ax(kwargs)
 
-        set_ticks_position(ax, 'bottom', 'left')
-        remove_ticks(ax, ['x'])
-        remove_spines(ax)
-        set_spines(ax, _almost_black)
-        move_spines(ax, ['bottom'], [-0.02])
+        set_spines(ax, "black")
         
         return plt.semilogy(*args, **kwargs)
         
@@ -103,10 +91,7 @@ class PrettyTheme(BaseTheme):
         self.setstyle()
         ax = get_ax(kwargs)
 
-        set_ticks_position(ax, 'bottom', 'left')
-        remove_spines(ax)
-        set_spines(ax, _almost_black)
-        move_spines(ax, ['bottom', 'left'], [-0.02, -0.02])
+        set_spines(ax, "black")
         
         return plt.loglog(*args, **kwargs)
 
@@ -116,9 +101,8 @@ class PrettyTheme(BaseTheme):
                          'axes.axisbelow' : False})
         ax = get_ax(kwargs)
         cadd(kwargs, 'edgecolor', 'white')
-        remove_ticks(ax)
-        remove_spines(ax)
-        set_spines(ax, _almost_black)
+        remove_ticks(ax, ['x'])
+        set_spines(ax, "black")
         ax.grid(axis='y', color='white', linestyle='-', linewidth=0.5)
         
         return plt.hist(*args, **kwargs)

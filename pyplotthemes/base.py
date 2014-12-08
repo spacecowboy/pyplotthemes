@@ -181,14 +181,12 @@ class BaseTheme(object):
     
     @property
     def colors(self):
-        return self._colorcycle
+        return self.rcParams['axes.color_cycle']
     
     @colors.setter
     def colors(self, cl):
-        if cl is None:
-            cl = 'b, g, r, c, m, y, k'.split(", ")
-        self._colorcycle = cl
-        self.rcParams['axes.color_cycle'] = self._colorcycle
+        if cl is not None:
+            self.rcParams['axes.color_cycle'] = self._colorcycle
     
     def __getattr__(self, name):
         '''
@@ -226,10 +224,11 @@ def cadd(d, key, value):
         d[key] = value
 
         
-def get_ax(ax=None, **kwargs):
+def get_ax(kwargs):
     '''
     Return the specified axis, or if None, the current axis.
     '''
+    ax = kwargs.pop('ax') if 'ax' in kwargs else None
     if ax is None:
         ax = plt.gca()
     return ax
@@ -266,6 +265,14 @@ def set_spines(ax, color='black', lw=0.5, sides=None):
         ax.spines[side].set_linewidth(lw)
         ax.spines[side].set_color(color)
         
+def move_spines(ax, sides, dists):
+    '''
+    Move the entire spine relative to the figure.
+    Examples:
+    move_spines(ax, sides=['left', 'bottom'], dists=[-0.02, 0.1])
+    '''
+    for side, dist in zip(sides, dists):
+        ax.spines[side].set_position(('axes', dist))
 
 def set_axiscolors(ax, color, xy=None):
     '''
@@ -299,6 +306,18 @@ def remove_ticks(ax, xy=None):
         ax.xaxis.set_ticks_position('none')
     if 'y' in xy:
         ax.yaxis.set_ticks_position('none')
+        
+def set_ticks_position(ax, x=None, y=None):
+    '''
+    Set position of ticks.
+    Defaults are x = ['bottom', 'top'], y = ['left', 'right']
+    '''
+    if x is None:
+        x = ['top', 'bottom']
+    if y is None:
+        y = ['right', 'left']
+    ax.yaxis.set_ticks_position(y)
+    ax.xaxis.set_ticks_position(x)
         
         
 def get_savefig(savedir, prefix=None, filename=None, extensions=None):
