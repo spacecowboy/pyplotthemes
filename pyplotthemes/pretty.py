@@ -76,6 +76,21 @@ class PrettyTheme(BaseTheme):
 
         return plt.plot(*args, **kwargs)
 
+    @wraps(plt.errorbar)
+    def errorbar(self, *args, **kwargs):
+        self.setstyle()
+        ax = get_ax(kwargs)
+
+        if axes_is_polar(ax):
+            ax.grid(True, color='grey', linestyle=':')
+        else:
+            remove_ticks(ax)
+            remove_spines(ax)
+
+        set_spines(ax, _almost_black)
+
+        return plt.errorbar(*args, **kwargs)
+
     @wraps(plt.semilogx)
     def semilogx(self, *args, **kwargs):
         self.setstyle()

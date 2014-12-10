@@ -69,6 +69,17 @@ class ClassicTheme(BaseTheme):
 
         return plt.plot(*args, **kwargs)
 
+    @wraps(plt.errorbar)
+    def errorbar(self, *args, **kwargs):
+        self.setstyle()
+        ax = get_ax(kwargs)
+
+        set_spines(ax, "black")
+        if axes_is_polar(ax):
+            ax.grid(True, color='k', linestyle=':')
+
+        return plt.errorbar(*args, **kwargs)
+
     @wraps(plt.semilogx)
     def semilogx(self, *args, **kwargs):
         self.setstyle()
