@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 
 from .base import *
-import matplotlib as mpl
 from matplotlib import pyplot as plt
 from functools import wraps
 
@@ -50,12 +50,12 @@ class PrettyTheme(BaseTheme):
         cadd(kwargs, 'savefig.dpi', 100)
 
         super().__init__(**kwargs)
-        
+
     @wraps(plt.legend)
     def legend(self, *args, **kwargs):
         self.setstyle()
         cadd(kwargs, 'framealpha', 0.5)
-        
+
         lg = plt.legend(*args, **kwargs)
         # Remove border of box
         lg.get_frame().set_linewidth(0.0)
@@ -66,12 +66,16 @@ class PrettyTheme(BaseTheme):
         self.setstyle()
         ax = get_ax(kwargs)
 
-        remove_ticks(ax)
-        remove_spines(ax)
+        if axes_is_polar(ax):
+            ax.grid(True, color='grey', linestyle=':')
+        else:
+            remove_ticks(ax)
+            remove_spines(ax)
+
         set_spines(ax, _almost_black)
-        
+
         return plt.plot(*args, **kwargs)
-        
+
     @wraps(plt.semilogx)
     def semilogx(self, *args, **kwargs):
         self.setstyle()
@@ -82,9 +86,9 @@ class PrettyTheme(BaseTheme):
         remove_spines(ax)
         set_spines(ax, _almost_black)
         move_spines(ax, ['left'], [-0.02])
-        
+
         return plt.semilogx(*args, **kwargs)
-        
+
     @wraps(plt.semilogy)
     def semilogy(self, *args, **kwargs):
         self.setstyle()
@@ -95,9 +99,9 @@ class PrettyTheme(BaseTheme):
         remove_spines(ax)
         set_spines(ax, _almost_black)
         move_spines(ax, ['bottom'], [-0.02])
-        
+
         return plt.semilogy(*args, **kwargs)
-        
+
     @wraps(plt.loglog)
     def loglog(self, *args, **kwargs):
         self.setstyle()
@@ -107,7 +111,7 @@ class PrettyTheme(BaseTheme):
         remove_spines(ax)
         set_spines(ax, _almost_black)
         move_spines(ax, ['bottom', 'left'], [-0.02, -0.02])
-        
+
         return plt.loglog(*args, **kwargs)
 
     @wraps(plt.hist)
@@ -120,11 +124,10 @@ class PrettyTheme(BaseTheme):
         remove_spines(ax)
         set_spines(ax, _almost_black)
         ax.grid(axis='y', color='white', linestyle='-', linewidth=0.5)
-        
+
         return plt.hist(*args, **kwargs)
-        
-        
+
+
         # TODO
         # boxplot
         # scatter
-        

@@ -1,15 +1,10 @@
-
-from .base import BaseTheme
+# -*- coding: utf-8 -*-
+from .base import *
 from .pretty import PrettyTheme
 from .classic import ClassicTheme
 
 
-# Themes in namespace
-base = BaseTheme()
-pretty = PrettyTheme()
-classic = ClassicTheme()
-
-# Also keep a dict of themes
-themes = dict(base=base,
-              pretty=pretty,
-              classic=classic)
+# Instantiate the themes for easy importing
+basetheme = BaseTheme()
+prettytheme = PrettyTheme()
+classictheme = ClassicTheme()

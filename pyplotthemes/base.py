@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import matplotlib as mpl
 from matplotlib import pyplot as plt
@@ -10,18 +11,18 @@ class BaseTheme(object):
     on the axis produced. All themes should inherit from this class.
     This theme's attributes are (more or less) the defaults in matplotlib.
     '''
-    
+
     def __init__(self, latex=False, colors=None, **kwargs):
         '''
         Valid keyword arguments are anything that is accepted
         by matplotlib.rcParams. These values can be overridden
-        for each seperate function call as well. 
-        
+        for each seperate function call as well.
+
         Some additional convenience arguments have also been defined:
         - latex : False/True, Force LaTeX and Computer Modern (font) everywhere
         - colors: [list of colors], The color cycle to use when plotting
         '''
-            
+
         # Matplotlib defaults
         cadd(kwargs, 'lines.linewidth', 1.0)
         cadd(kwargs, 'lines.linestyle', '-')
@@ -46,7 +47,7 @@ class BaseTheme(object):
         cadd(kwargs, 'font.cursive', 'Apple Chancery, Textile, Zapf Chancery, Sand, cursive'.split(", "))
         cadd(kwargs, 'font.monospace', 'Bitstream Vera Sans Mono, Andale Mono, Nimbus Mono L, Courier New, Courier, Fixed, Terminal, monospace'.split(", "))
 
-        cadd(kwargs, 'text.usetex', False)                         
+        cadd(kwargs, 'text.usetex', False)
         cadd(kwargs, 'text.latex.unicode', False)
         cadd(kwargs, 'text.latex.preamble', '')
         cadd(kwargs, 'text.dvipnghack', 'None')
@@ -60,7 +61,7 @@ class BaseTheme(object):
         cadd(kwargs, 'mathtext.fontset', 'cm')
         cadd(kwargs, 'mathtext.fallback_to_cm', True)
         cadd(kwargs, 'mathtext.default', 'it')
-        
+
         cadd(kwargs, 'axes.hold', True)
         cadd(kwargs, 'axes.facecolor', 'white')
         cadd(kwargs, 'axes.edgecolor', 'black')
@@ -150,20 +151,20 @@ class BaseTheme(object):
         cadd(kwargs, 'savefig.edgecolor', 'white')
         cadd(kwargs, 'savefig.format', 'png')
         cadd(kwargs, 'savefig.bbox', 'standard')
-                                
+
         cadd(kwargs, 'savefig.pad_inches', 0.1)
         cadd(kwargs, 'savefig.directory', '~')
         #cadd(kwargs, 'savefig.transparent', False)
-        
+
         self.rcParams = kwargs
         # Should be last to override rcParams properly
         self.latex = latex
         self.colors = colors
-        
+
     @property
     def latex(self):
         return self._latex
-    
+
     @latex.setter
     def latex(self, val):
         self._latex = val
@@ -178,30 +179,30 @@ class BaseTheme(object):
             # Use Latex font always
             self.rcParams['font.family'] = 'sans-serif'
             self.rcParams['font.serif'] = 'Bitstream Vera Serif, New Century Schoolbook, Century Schoolbook L, Utopia, ITC Bookman, Bookman, Nimbus Roman No9 L, Times New Roman, Times, Palatino, Charter, serif'.split(", ")
-    
+
     @property
     def colors(self):
         return self.rcParams['axes.color_cycle']
-    
+
     @colors.setter
     def colors(self, cl):
         if cl is not None:
             self.rcParams['axes.color_cycle'] = self._colorcycle
-    
+
     def __getattr__(self, name):
         '''
         This method is called last in the getattribute chain and will
         only be called if an attribute with that name does not exist
         on this or any child classes. In that case, it will try to call
         the corresponding method/property from the pyplot module.
-        
+
         If successful, the theme's rcParams are set before returning.
         '''
         plt_attr = getattr(plt, name)
         # Set style first
         self.setstyle()
         return plt_attr
-        
+
     def setstyle(self, **kwargs):
         '''
         Set the theme's rcParams on matplotlib, as well as any
@@ -213,8 +214,8 @@ class BaseTheme(object):
         # Allow kwargs to override
         for k, v in kwargs.items():
             mpl.rcParams[k] = v
-            
-            
+
+
 def cadd(d, key, value):
     '''
     Conditional add. Adds key with value in dict d if
@@ -223,7 +224,7 @@ def cadd(d, key, value):
     if key not in d:
         d[key] = value
 
-        
+
 def get_ax(kwargs):
     '''
     Return the specified axis, or if None, the current axis.
@@ -237,7 +238,7 @@ def get_ax(kwargs):
 def remove_spines(ax, sides=None):
     '''
     Remove spines of axis. Default: 'top' and 'right'
-    
+
     Examples:
     removespines(ax)
     removespines(ax, ['top'])
@@ -248,11 +249,25 @@ def remove_spines(ax, sides=None):
     for side in sides:
         ax.spines[side].set_visible(False)
 
-        
+
+def axes_is_polar(ax):
+    '''
+    Returns true if the axes has a polar projection.
+    '''
+    try:
+        ax.spines['polar']
+        # Yes it's polar
+        return True
+    except KeyError:
+        # Not polar
+        return False
+
+
 def set_spines(ax, color='black', lw=0.5, sides=None):
     '''
-    Set properties of spines. By default: 'top', 'bottom', 'right', 'left'
-    
+    Set properties of spines. By default: 'top', 'bottom', 'right', 'left',
+    unless axes is polar, in which case the default is 'polar'.
+
     Examples:
     set_spines(ax)
     set_spines(ax, ['top'])
@@ -260,11 +275,16 @@ def set_spines(ax, color='black', lw=0.5, sides=None):
     set_spines(ax, '#FFFFFF', sides=['right'], lw=1.0)
     '''
     if sides is None:
-        sides = ['top', 'bottom', 'right', 'left']
+        # See if it is polar
+        if axes_is_polar(ax):
+            sides = ['polar']
+        else:
+            sides = ['top', 'bottom', 'right', 'left']
     for side in sides:
         ax.spines[side].set_linewidth(lw)
         ax.spines[side].set_color(color)
-        
+
+
 def move_spines(ax, sides, dists):
     '''
     Move the entire spine relative to the figure.
@@ -274,10 +294,11 @@ def move_spines(ax, sides, dists):
     for side, dist in zip(sides, dists):
         ax.spines[side].set_position(('axes', dist))
 
+
 def set_axiscolors(ax, color, xy=None):
     '''
     Set colors on axis, 'x' and/or 'y'. Default is both.
-    
+
     Examples:
     set_axiscolors(ax, 'red')
     set_axiscolors(ax, '#FFFFFF', ['x'])
@@ -289,12 +310,12 @@ def set_axiscolors(ax, color, xy=None):
         ax.xaxis.label.set_color(color)
     if 'y' in xy:
         ax.yaxis.label.set_color(color)
-        
+
 
 def remove_ticks(ax, xy=None):
     '''
     Remove ticks from axis. Default: 'x' and 'y'
-    
+
     Examples:
     removeticks(ax)
     removeticks(ax, ['x'])
@@ -306,7 +327,7 @@ def remove_ticks(ax, xy=None):
         ax.xaxis.set_ticks_position('none')
     if 'y' in xy:
         ax.yaxis.set_ticks_position('none')
-        
+
 def set_ticks_position(ax, x=None, y=None):
     '''
     Set position of ticks.
@@ -318,8 +339,8 @@ def set_ticks_position(ax, x=None, y=None):
         y = ['right', 'left']
     ax.yaxis.set_ticks_position(y)
     ax.xaxis.set_ticks_position(x)
-        
-        
+
+
 def get_savefig(savedir, prefix=None, filename=None, extensions=None):
     '''
     Returns a function which saves the current matplotlib figure
@@ -380,7 +401,7 @@ def get_savefig(savedir, prefix=None, filename=None, extensions=None):
 
         for ext in extensions:
             plt.savefig(*([fname + '.' + ext] + args), **kwargs)
-            
+
     savefig.__doc__ = '''
         Use as plt.savefig. File extension will be ignored, and saved
         as {ext} in {savedir}
@@ -390,9 +411,9 @@ def get_savefig(savedir, prefix=None, filename=None, extensions=None):
         has been defined.
 
         Accepts any arguments that plt.savefig accepts:
-        
+
         {pltdoc}
-        '''.format(ext=extensions, savedir=savedir, 
+        '''.format(ext=extensions, savedir=savedir,
                    pltdoc=plt.savefig.__doc__[plt.savefig.__doc__.find("Keyword arguments:"):])
 
     return savefig

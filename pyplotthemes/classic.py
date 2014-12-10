@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 
 from .base import *
-import matplotlib as mpl
 from matplotlib import pyplot as plt
 from functools import wraps
 
@@ -47,17 +47,16 @@ class ClassicTheme(BaseTheme):
         cadd(kwargs, 'savefig.dpi', 100)
 
         super().__init__(**kwargs)
-        
+
     @wraps(plt.legend)
     def legend(self, *args, **kwargs):
         self.setstyle()
         cadd(kwargs, 'framealpha', 0.5)
-        
+
         lg = plt.legend(*args, **kwargs)
         # Set black border
         lg.get_frame().set_edgecolor('black')
         return lg
-
 
     @wraps(plt.plot)
     def plot(self, *args, **kwargs):
@@ -65,34 +64,36 @@ class ClassicTheme(BaseTheme):
         ax = get_ax(kwargs)
 
         set_spines(ax, "black")
-        
+        if axes_is_polar(ax):
+            ax.grid(True, color='k', linestyle=':')
+
         return plt.plot(*args, **kwargs)
-        
+
     @wraps(plt.semilogx)
     def semilogx(self, *args, **kwargs):
         self.setstyle()
         ax = get_ax(kwargs)
-        
+
         set_spines(ax, "black")
-        
+
         return plt.semilogx(*args, **kwargs)
-        
+
     @wraps(plt.semilogy)
     def semilogy(self, *args, **kwargs):
         self.setstyle()
         ax = get_ax(kwargs)
 
         set_spines(ax, "black")
-        
+
         return plt.semilogy(*args, **kwargs)
-        
+
     @wraps(plt.loglog)
     def loglog(self, *args, **kwargs):
         self.setstyle()
         ax = get_ax(kwargs)
 
         set_spines(ax, "black")
-        
+
         return plt.loglog(*args, **kwargs)
 
     @wraps(plt.hist)
@@ -104,11 +105,11 @@ class ClassicTheme(BaseTheme):
         remove_ticks(ax, ['x'])
         set_spines(ax, "black")
         ax.grid(axis='y', color='white', linestyle='-', linewidth=0.5)
-        
+
         return plt.hist(*args, **kwargs)
-        
-        
+
+
         # TODO
         # boxplot
         # scatter
-        
+        # fillbetween - color choice
