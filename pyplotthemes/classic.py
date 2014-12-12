@@ -9,9 +9,9 @@ class ClassicTheme(BaseTheme):
     '''
     A classically looking theme with enclosing boxes and a no-frills
     approach. Suitable for publications.
+    '''
+    __doc__ += BaseTheme.__doc__
 
-    {}
-    '''.format(BaseTheme.__doc__)
     def __init__(self, **kwargs):
         # Colors
         # Colorbrewer 9-class Set1 (minus yellow), print-friendly

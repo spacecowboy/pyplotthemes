@@ -13,8 +13,9 @@ class PrettyTheme(BaseTheme):
     '''
     A minimalist theme with ticks and axes only where
     required. More suitable for web publication than print.
+    '''
+    __doc__ += BaseTheme.__doc__
 
-    '''.format(BaseTheme.__doc__)
     def __init__(self, **kwargs):
         # Colors
         cadd(kwargs, 'axes.color_cycle', ['#E41A1C', '#377EB8', '#4DAF4A',
