@@ -5,12 +5,13 @@ from matplotlib import pyplot as plt
 from functools import wraps
 
 
-
 class ClassicTheme(BaseTheme):
     '''
     A classically looking theme with enclosing boxes and a no-frills
     approach. Suitable for publications.
-    '''
+
+    {}
+    '''.format(BaseTheme.__doc__)
     def __init__(self, **kwargs):
         # Colors
         # Colorbrewer 9-class Set1 (minus yellow), print-friendly
@@ -52,8 +53,9 @@ class ClassicTheme(BaseTheme):
     def legend(self, *args, **kwargs):
         self.setstyle()
         cadd(kwargs, 'framealpha', 0.5)
+        ax = get_ax(kwargs)
 
-        lg = plt.legend(*args, **kwargs)
+        lg = ax.legend(*args, **kwargs)
         # Set black border
         lg.get_frame().set_edgecolor('black')
         return lg
@@ -67,7 +69,7 @@ class ClassicTheme(BaseTheme):
         if axes_is_polar(ax):
             ax.grid(True, color='k', linestyle=':')
 
-        return plt.plot(*args, **kwargs)
+        return ax.plot(*args, **kwargs)
 
     @wraps(plt.errorbar)
     def errorbar(self, *args, **kwargs):
@@ -78,7 +80,7 @@ class ClassicTheme(BaseTheme):
         if axes_is_polar(ax):
             ax.grid(True, color='k', linestyle=':')
 
-        return plt.errorbar(*args, **kwargs)
+        return ax.errorbar(*args, **kwargs)
 
     @wraps(plt.semilogx)
     def semilogx(self, *args, **kwargs):
@@ -87,7 +89,7 @@ class ClassicTheme(BaseTheme):
 
         set_spines(ax, "black")
 
-        return plt.semilogx(*args, **kwargs)
+        return ax.semilogx(*args, **kwargs)
 
     @wraps(plt.semilogy)
     def semilogy(self, *args, **kwargs):
@@ -96,7 +98,7 @@ class ClassicTheme(BaseTheme):
 
         set_spines(ax, "black")
 
-        return plt.semilogy(*args, **kwargs)
+        return ax.semilogy(*args, **kwargs)
 
     @wraps(plt.loglog)
     def loglog(self, *args, **kwargs):
@@ -105,19 +107,19 @@ class ClassicTheme(BaseTheme):
 
         set_spines(ax, "black")
 
-        return plt.loglog(*args, **kwargs)
+        return ax.loglog(*args, **kwargs)
 
     @wraps(plt.hist)
     def hist(self, *args, **kwargs):
-        self.setstyle(**{'axes.grid' : False,
-                         'axes.axisbelow' : False})
+        self.setstyle(**{'axes.grid': False,
+                         'axes.axisbelow': False})
         ax = get_ax(kwargs)
         cadd(kwargs, 'edgecolor', 'white')
         remove_ticks(ax, ['x'])
         set_spines(ax, "black")
         ax.grid(axis='y', color='white', linestyle='-', linewidth=0.5)
 
-        return plt.hist(*args, **kwargs)
+        return ax.hist(*args, **kwargs)
 
 
         # TODO

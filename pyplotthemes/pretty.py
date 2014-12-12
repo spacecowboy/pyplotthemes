@@ -13,7 +13,8 @@ class PrettyTheme(BaseTheme):
     '''
     A minimalist theme with ticks and axes only where
     required. More suitable for web publication than print.
-    '''
+
+    '''.format(BaseTheme.__doc__)
     def __init__(self, **kwargs):
         # Colors
         cadd(kwargs, 'axes.color_cycle', ['#E41A1C', '#377EB8', '#4DAF4A',
@@ -55,8 +56,9 @@ class PrettyTheme(BaseTheme):
     def legend(self, *args, **kwargs):
         self.setstyle()
         cadd(kwargs, 'framealpha', 0.5)
+        ax = get_ax(kwargs)
 
-        lg = plt.legend(*args, **kwargs)
+        lg = ax.legend(*args, **kwargs)
         # Remove border of box
         lg.get_frame().set_linewidth(0.0)
         return lg
@@ -74,7 +76,7 @@ class PrettyTheme(BaseTheme):
 
         set_spines(ax, _almost_black)
 
-        return plt.plot(*args, **kwargs)
+        return ax.plot(*args, **kwargs)
 
     @wraps(plt.errorbar)
     def errorbar(self, *args, **kwargs):
@@ -89,7 +91,7 @@ class PrettyTheme(BaseTheme):
 
         set_spines(ax, _almost_black)
 
-        return plt.errorbar(*args, **kwargs)
+        return ax.errorbar(*args, **kwargs)
 
     @wraps(plt.semilogx)
     def semilogx(self, *args, **kwargs):
@@ -102,7 +104,7 @@ class PrettyTheme(BaseTheme):
         set_spines(ax, _almost_black)
         move_spines(ax, ['left'], [-0.02])
 
-        return plt.semilogx(*args, **kwargs)
+        return ax.semilogx(*args, **kwargs)
 
     @wraps(plt.semilogy)
     def semilogy(self, *args, **kwargs):
@@ -115,7 +117,7 @@ class PrettyTheme(BaseTheme):
         set_spines(ax, _almost_black)
         move_spines(ax, ['bottom'], [-0.02])
 
-        return plt.semilogy(*args, **kwargs)
+        return ax.semilogy(*args, **kwargs)
 
     @wraps(plt.loglog)
     def loglog(self, *args, **kwargs):
@@ -127,12 +129,12 @@ class PrettyTheme(BaseTheme):
         set_spines(ax, _almost_black)
         move_spines(ax, ['bottom', 'left'], [-0.02, -0.02])
 
-        return plt.loglog(*args, **kwargs)
+        return ax.loglog(*args, **kwargs)
 
     @wraps(plt.hist)
     def hist(self, *args, **kwargs):
-        self.setstyle(**{'axes.grid' : False,
-                         'axes.axisbelow' : False})
+        self.setstyle(**{'axes.grid': False,
+                         'axes.axisbelow': False})
         ax = get_ax(kwargs)
         cadd(kwargs, 'edgecolor', 'white')
         remove_ticks(ax)
@@ -140,7 +142,7 @@ class PrettyTheme(BaseTheme):
         set_spines(ax, _almost_black)
         ax.grid(axis='y', color='white', linestyle='-', linewidth=0.5)
 
-        return plt.hist(*args, **kwargs)
+        return ax.hist(*args, **kwargs)
 
 
         # TODO

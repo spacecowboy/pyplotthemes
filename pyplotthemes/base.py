@@ -8,21 +8,18 @@ import os
 class BaseTheme(object):
     '''
     A theme wraps plotting methods and sets appropriate properties
-    on the axis produced. All themes should inherit from this class.
-    This theme's attributes are (more or less) the defaults in matplotlib.
+    on the axis produced.
+
+    Valid keyword arguments are anything that is accepted
+    by matplotlib.rcParams. These values can be overridden
+    for each seperate function call as well.
+
+    Some additional convenience arguments/properties have also been defined:
+    - latex : False/True, Force LaTeX and Computer Modern (font) everywhere
+    - colors: [list of colors], The color cycle to use when plotting
     '''
 
     def __init__(self, latex=False, colors=None, **kwargs):
-        '''
-        Valid keyword arguments are anything that is accepted
-        by matplotlib.rcParams. These values can be overridden
-        for each seperate function call as well.
-
-        Some additional convenience arguments have also been defined:
-        - latex : False/True, Force LaTeX and Computer Modern (font) everywhere
-        - colors: [list of colors], The color cycle to use when plotting
-        '''
-
         # Matplotlib defaults
         cadd(kwargs, 'lines.linewidth', 1.0)
         cadd(kwargs, 'lines.linestyle', '-')
@@ -328,6 +325,7 @@ def remove_ticks(ax, xy=None):
     if 'y' in xy:
         ax.yaxis.set_ticks_position('none')
 
+
 def set_ticks_position(ax, x=None, y=None):
     '''
     Set position of ticks.
@@ -383,11 +381,11 @@ def get_savefig(savedir, prefix=None, filename=None, extensions=None):
         # Default filename
         fname = filename
         if args is None or len(args) == 0:
-            args = [] # Just make sure it's a list
+            args = []  # Just make sure it's a list
         else:
             args = list(args)
             fname, ext = os.path.splitext(args.pop(0))
-            #prefixing with path and prefix
+            # prefixing with path and prefix
             fileprefix = prefix
             if prefix is None:
                 fileprefix = ''
