@@ -2,6 +2,7 @@
 
 from .base import *
 from matplotlib import pyplot as plt
+from matplotlib import cm
 from functools import wraps
 
 
@@ -120,6 +121,48 @@ class ClassicTheme(BaseTheme):
         ax.grid(axis='y', color='white', linestyle='-', linewidth=0.5)
 
         return ax.hist(*args, **kwargs)
+
+    @wraps(plt.pcolormesh)
+    def pcolormesh(self, *args, **kwargs):
+        self.setstyle()
+        ax = get_ax(kwargs)
+
+        if len(args) == 3:
+            x = args[0]
+            y = args[1]
+            data = args[2]
+        elif len(args) == 1:
+            data = args[0]
+            kwargs.setdefault('vmax', data.max())
+            kwargs.setdefault('vmin', data.min())
+
+        center_value = kwargs.pop('center_value', 0)
+        divergent_data = False
+        if kwargs['vmax'] > 0 and kwargs['vmin'] < 0:
+            divergent_data = True
+            kwargs['vmax'] += center_value
+            kwargs['vmin'] += center_value
+
+        # Selecting a suitable colormap
+        if 'cmap' not in kwargs:
+            #if divergent_data:
+                #cmap = brewer2mpl.get_map('RdBu', 'Diverging', 11,
+                #                          reverse=True).mpl_colormap
+            if kwargs['vmax'] <= 0:
+                cmap = cm.Blues_r
+                cmap.set_bad('white')
+                cmap.set_under('white')
+            else:
+                cmap = cm.Reds
+                cmap.set_bad('white')
+                cmap.set_under('white')
+            kwargs['cmap'] = cmap
+
+        res = ax.pcolormesh(*args, **kwargs)
+
+        remove_ticks(ax)
+
+        return res
 
     @wraps(plt.boxplot)
     def boxplot(self, *args, **kwargs):
