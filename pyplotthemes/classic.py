@@ -121,8 +121,55 @@ class ClassicTheme(BaseTheme):
 
         return ax.hist(*args, **kwargs)
 
+    @wraps(plt.boxplot)
+    def boxplot(self, *args, **kwargs):
+        self.setstyle()
+
+        # Support color argument, default is normal colors
+        colors = kwargs.pop('colors', self.colors)
+
+        ax = get_ax(kwargs)
+
+        # For bug in Matplotlib 1.4, not respecting flierprops
+        kwargs['sym'] = 'ko'
+
+        bp = ax.boxplot(*args, **kwargs)
+
+        set_spines(ax, "black")
+        if kwargs.get('vert', True):
+            remove_ticks(ax, ['x'])
+        else:
+            remove_ticks(ax, ['y'])
+
+        # Use black instead of blue
+        plt.setp(bp['boxes'], color='black')
+        plt.setp(bp['whiskers'], color='black', linestyle='solid')
+        plt.setp(bp['fliers'], color='black', alpha=0.9, marker='o',
+                 markersize=3)
+        plt.setp(bp['medians'], color='black')
+
+        # Color boxes
+        if colors:
+            boxpolygons = []
+            for boxi, box in enumerate(bp['boxes']):
+                boxX = []
+                boxY = []
+                # TODO
+                # Does not support notch yet
+                for j in range(5):
+                    boxX.append(box.get_xdata()[j])
+                    boxY.append(box.get_ydata()[j])
+                boxCoords = list(zip(boxX, boxY))
+
+                boxPolygon = plt.Polygon(boxCoords,
+                                         facecolor=colors[boxi % len(colors)])
+
+                ax.add_patch(boxPolygon)
+                boxpolygons.append(boxPolygon)
+            bp['boxpolygons'] = boxpolygons
+
+        return bp
 
         # TODO
-        # boxplot
         # scatter
         # fillbetween - color choice
