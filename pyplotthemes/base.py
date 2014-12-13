@@ -397,8 +397,12 @@ def get_savefig(savedir, prefix=None, filename=None, extensions=None):
         if fname is None:
             raise ValueError("A filename must be specified!")
 
+        fig = kwargs.pop('fig', None)
+        if fig is None:
+            fig = plt.gcf()
+
         for ext in extensions:
-            plt.savefig(*([fname + '.' + ext] + args), **kwargs)
+            fig.savefig(*([fname + '.' + ext] + args), **kwargs)
 
     savefig.__doc__ = '''
         Use as plt.savefig. File extension will be ignored, and saved
