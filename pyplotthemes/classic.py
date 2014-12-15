@@ -145,17 +145,14 @@ class ClassicTheme(BaseTheme):
 
         # Selecting a suitable colormap
         if 'cmap' not in kwargs:
-            #if divergent_data:
-                #cmap = brewer2mpl.get_map('RdBu', 'Diverging', 11,
-                #                          reverse=True).mpl_colormap
-            if kwargs['vmax'] <= 0:
+            if divergent_data:
+                cmap = cm.RdBu_r
+            elif kwargs['vmax'] <= 0:
                 cmap = cm.Blues_r
-                cmap.set_bad('white')
-                cmap.set_under('white')
             else:
                 cmap = cm.Reds
-                cmap.set_bad('white')
-                cmap.set_under('white')
+            #cmap.set_bad('white')
+            #cmap.set_under('white')
             kwargs['cmap'] = cmap
 
         res = ax.pcolormesh(*args, **kwargs)
