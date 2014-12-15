@@ -23,7 +23,7 @@ class ClassicTheme(BaseTheme):
         cadd(kwargs, 'axes.labelsize', 'large')
         cadd(kwargs, 'axes.labelcolor', "black")
         cadd(kwargs, 'axes.facecolor', 'white')
-        cadd(kwargs, 'axes.edgecolor', 'white')
+        cadd(kwargs, 'axes.edgecolor', 'black')
         # Ticks
         cadd(kwargs, 'xtick.direction', 'in')
         cadd(kwargs, 'ytick.direction', 'in')
