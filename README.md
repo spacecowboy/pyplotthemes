@@ -197,3 +197,103 @@ values easier to read.
 
 ![png](README_files/README_9_2.png)
 
+
+## Boxplot
+
+
+    def boxtest(theme):
+        np.random.seed(0)
+        theme.figure(figsize=(5,4))
+        
+        x = []
+        for j in range(5):
+            x.append(np.random.exponential(j + 1, size=100))
+        
+        theme.boxplot(x)
+        #theme.legend(loc='best')
+        
+    
+    for (name, theme) in zip(names, themes):
+        boxtest(theme)
+        theme.title(name)
+
+
+![png](README_files/README_11_0.png)
+
+
+
+![png](README_files/README_11_1.png)
+
+
+
+![png](README_files/README_11_2.png)
+
+
+## Heatmaps
+
+
+    def heattest(theme, mins):
+        np.random.seed(10)
+        x = np.random.normal(size=(10, 10))
+        
+        if mins < 0:
+            # Force into negative
+            x = x - np.max(x)
+        elif mins > 0:
+            # Force into positive
+            x = x - np.min(x)
+        
+        theme.figure(figsize=(5,4))
+        p = theme.pcolormesh(x)
+        theme.colorbar(p)
+        
+        
+    
+    for (name, theme) in zip(names, themes):
+        for mins in [-1, 0, 1]:
+            heattest(theme, mins)
+            
+            t = name
+            if mins < 0:
+                t += " only negative"
+            elif mins == 0:
+                t += " both +/-"
+            else:
+                t += " only positive"
+            theme.title(t)
+
+
+![png](README_files/README_13_0.png)
+
+
+
+![png](README_files/README_13_1.png)
+
+
+
+![png](README_files/README_13_2.png)
+
+
+
+![png](README_files/README_13_3.png)
+
+
+
+![png](README_files/README_13_4.png)
+
+
+
+![png](README_files/README_13_5.png)
+
+
+
+![png](README_files/README_13_6.png)
+
+
+
+![png](README_files/README_13_7.png)
+
+
+
+![png](README_files/README_13_8.png)
+
