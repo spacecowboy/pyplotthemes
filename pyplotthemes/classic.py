@@ -128,8 +128,8 @@ class ClassicTheme(BaseTheme):
         ax = get_ax(kwargs)
 
         if len(args) == 3:
-            x = args[0]
-            y = args[1]
+            # x = args[0]
+            # y = args[1]
             data = args[2]
         elif len(args) == 1:
             data = args[0]
@@ -151,8 +151,8 @@ class ClassicTheme(BaseTheme):
                 cmap = cm.Blues_r
             else:
                 cmap = cm.Reds
-            #cmap.set_bad('white')
-            #cmap.set_under('white')
+            # cmap.set_bad('white')
+            # cmap.set_under('white')
             kwargs['cmap'] = cmap
 
         res = ax.pcolormesh(*args, **kwargs)
@@ -173,7 +173,11 @@ class ClassicTheme(BaseTheme):
         # For bug in Matplotlib 1.4, not respecting flierprops
         kwargs['sym'] = 'ko'
 
+        # Do boxplot
         bp = ax.boxplot(*args, **kwargs)
+
+        # Add grid lines
+        ax.grid(True, color='grey', linestyle=':', axis='y')
 
         set_spines(ax, "black")
         if kwargs.get('vert', True):

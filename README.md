@@ -207,7 +207,7 @@ values easier to read.
         
         x = []
         for j in range(5):
-            x.append(np.random.exponential(j + 1, size=100))
+            x.append(np.random.exponential(3*(j + 1), size=100))
         
         theme.boxplot(x)
         #theme.legend(loc='best')

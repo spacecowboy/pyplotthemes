@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from .base import *
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as pl
+from matplotlib import cm
 from functools import wraps
 
 
@@ -145,7 +146,96 @@ class PrettyTheme(BaseTheme):
 
         return ax.hist(*args, **kwargs)
 
+    @wraps(plt.pcolormesh)
+    def pcolormesh(self, *args, **kwargs):
+        self.setstyle()
+        ax = get_ax(kwargs)
+
+        if len(args) == 3:
+            # x = args[0]
+            # y = args[1]
+            data = args[2]
+        elif len(args) == 1:
+            data = args[0]
+            kwargs.setdefault('vmax', data.max())
+            kwargs.setdefault('vmin', data.min())
+
+        center_value = kwargs.pop('center_value', 0)
+        divergent_data = False
+        if kwargs['vmax'] > 0 and kwargs['vmin'] < 0:
+            divergent_data = True
+            kwargs['vmax'] += center_value
+            kwargs['vmin'] += center_value
+
+        # Selecting a suitable colormap
+        if 'cmap' not in kwargs:
+            if divergent_data:
+                cmap = cm.RdBu_r
+            elif kwargs['vmax'] <= 0:
+                cmap = cm.Blues_r
+            else:
+                cmap = cm.Reds
+            # cmap.set_bad('white')
+            # cmap.set_under('white')
+            kwargs['cmap'] = cmap
+
+        res = ax.pcolormesh(*args, **kwargs)
+
+        remove_ticks(ax)
+
+        return res
+
+    @wraps(plt.boxplot)
+    def boxplot(self, *args, **kwargs):
+        self.setstyle()
+
+        # Support color argument, default is normal colors
+        colors = kwargs.pop('colors', self.colors)
+
+        ax = get_ax(kwargs)
+
+        # For bug in Matplotlib 1.4, not respecting flierprops
+        kwargs['sym'] = 'ko'
+
+        # Do boxplot
+        bp = ax.boxplot(*args, **kwargs)
+
+        # Add grid lines
+        ax.grid(True, color='grey', linestyle=':', axis='y')
+
+        remove_spines(ax, ['top', 'bottom', 'right'])
+        set_spines(ax, _almost_black)
+        remove_ticks(ax, ['x', 'y'])
+
+        # Use black instead of blue
+        plt.setp(bp['boxes'], color='black')
+        plt.setp(bp['whiskers'], color='black', linestyle='solid')
+        plt.setp(bp['fliers'], color='black', alpha=0.9, marker='o',
+                 markersize=3)
+        plt.setp(bp['medians'], color='black')
+
+        # Color boxes
+        if colors:
+            boxpolygons = []
+            for boxi, box in enumerate(bp['boxes']):
+                boxX = []
+                boxY = []
+                # TODO
+                # Does not support notch yet
+                for j in range(5):
+                    boxX.append(box.get_xdata()[j])
+                    boxY.append(box.get_ydata()[j])
+                boxCoords = list(zip(boxX, boxY))
+
+                boxPolygon = plt.Polygon(boxCoords,
+                                         facecolor=colors[boxi % len(colors)])
+
+                ax.add_patch(boxPolygon)
+                boxpolygons.append(boxPolygon)
+            bp['boxpolygons'] = boxpolygons
+
+        return bp
+
 
         # TODO
-        # boxplot
         # scatter
