@@ -130,11 +130,12 @@ Either with `axes` or with `subplot`.
 Commonly used when the range of values are very large.
 
 
-    def logtest(theme):
-        theme.figure(figsize=(15,5))
+    def logtest(theme, name):
+        theme.figure(figsize=(15,4))
     
         for sub in range(3):
             theme.subplot(131 + sub)
+            theme.title(name)
             # Show the whole color range
             for i in range(8):
                 x = np.linspace(0, 1, 10)
@@ -151,8 +152,7 @@ Commonly used when the range of values are very large.
         
     
     for name, theme in zip(names, themes):
-        logtest(theme)
-        theme.gcf().suptitle(name)
+        logtest(theme, name)
 
 
 ![png](README_files/README_7_0.png)
@@ -243,14 +243,15 @@ values easier to read.
             # Force into positive
             x = x - np.min(x)
         
-        theme.figure(figsize=(5,4))
         p = theme.pcolormesh(x)
         theme.colorbar(p)
         
         
     
     for (name, theme) in zip(names, themes):
-        for mins in [-1, 0, 1]:
+        theme.figure(figsize=(15,4))
+        for mins, a in zip([-1, 0, 1], [131, 132, 133]):
+            theme.subplot(a)
             heattest(theme, mins)
             
             t = name
@@ -272,28 +273,4 @@ values easier to read.
 
 
 ![png](README_files/README_13_2.png)
-
-
-
-![png](README_files/README_13_3.png)
-
-
-
-![png](README_files/README_13_4.png)
-
-
-
-![png](README_files/README_13_5.png)
-
-
-
-![png](README_files/README_13_6.png)
-
-
-
-![png](README_files/README_13_7.png)
-
-
-
-![png](README_files/README_13_8.png)
 
