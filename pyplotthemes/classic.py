@@ -176,14 +176,14 @@ class ClassicTheme(BaseTheme):
         # Do boxplot
         bp = ax.boxplot(*args, **kwargs)
 
-        # Add grid lines
-        ax.grid(True, color='grey', linestyle=':', axis='y')
-
         set_spines(ax, "black")
+        # Add grid lines
         if kwargs.get('vert', True):
             remove_ticks(ax, ['x'])
+            ax.grid(True, color='grey', linestyle=':', axis='y')
         else:
             remove_ticks(ax, ['y'])
+            ax.grid(True, color='grey', linestyle=':', axis='x')
 
         # Use black instead of blue
         plt.setp(bp['boxes'], color='black')
